@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Bản mô phỏng công khai của Agent phiên âm và tổng hợp tin cho sinh viên.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Agent Phiên âm & Tổng hợp tin</title>
+<style>
+:root{color-scheme:light;--ink:#132a25;--muted:#475e56;--line:#d4e3d9;--green:#12634d;--paper:#f5f7f1}
+*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,sans-serif;background:var(--paper);color:var(--ink)}
+header{position:sticky;top:0;z-index:1;background:#102f26;color:#fff;padding:12px max(5vw,calc((100% - 1100px)/2));display:flex;gap:10px;align-items:center;justify-content:space-between}
+header small{color:#bff2d9;font-weight:700;text-align:right}main{max-width:1150px;margin:auto;padding:0 24px 60px}
+.hero{padding:60px 0 32px}.eyebrow{font-size:.82rem;letter-spacing:.14em;font-weight:800;color:var(--green)}
+h1{font-size:clamp(2.6rem,7vw,5.5rem);line-height:1;letter-spacing:-.055em;margin:15px 0 20px;max-width:830px}
+h2,h3{line-height:1.25}p{max-width:75ch}.muted{color:var(--muted)}
+.panel{background:white;border:1px solid var(--line);border-radius:20px;padding:clamp(16px,3vw,32px);margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
+button{font:inherit;font-weight:700;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);padding:9px 15px;cursor:pointer}
+button.primary,button[aria-pressed=true]{background:var(--green);color:white;border-color:var(--green)}
+button:focus-visible,summary:focus-visible{outline:3px solid #a05400;outline-offset:3px}
+button:disabled{opacity:.55;cursor:wait}.actions{display:flex;flex-wrap:wrap;gap:8px}
+.scroll{overflow:auto}table{border-collapse:collapse;width:100%;min-width:820px}
+caption{text-align:left;font-weight:700;margin:10px 0}th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-size:.84rem;background:#eff5ed}details{margin:8px 0}summary{cursor:pointer;color:var(--green);font-weight:700}
+.badge{display:inline-block;border-radius:20px;background:#dff4e9;color:#135139;padding:2px 9px;font-size:.85rem;font-weight:700}
+footer{color:var(--muted);font-size:.9rem}ol,ul{padding-left:22px} [hidden]{display:none!important}
+</style>
+<header><strong>◉ Agent Studio</strong><small>Bản mô phỏng · Dữ liệu giả</small></header>
+<main>
+<!-- language-switch -->
+<nav aria-label="Language" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:18px"><a style="color:#12634d;font-weight:700" href="index.html" hreflang="vi" lang="vi" aria-current="page">Tiếng Việt</a><a style="color:#12634d;font-weight:700" href="en.html" hreflang="en" lang="en">English</a><a style="color:#12634d;font-weight:700" href="zh.html" hreflang="zh-Hans" lang="zh-Hans">简体中文</a></nav>
+<!-- /language-switch -->
+<section class="hero">
+<div class="eyebrow">HỒ SƠ NĂNG LỰC / 01</div>
+<h1>Từ âm thanh<br>đến tin hữu ích.</h1>
+<p>Agent Phiên âm Âm thanh &amp; Video chắt lọc tin học tập và kỹ năng cho sinh viên, giữ nguồn để đối chiếu và đánh dấu những điểm cần người xác minh.</p>
+<p class="muted">Chọn một tình huống để xem quy trình và kết quả bàn giao minh họa.</p>
+</section>
+<section class="panel" aria-labelledby="demo">
+<h2 id="demo">Bàn làm việc mô phỏng</h2>
+<div class="actions" id="scenarios">
+<button data-case="batch" aria-pressed="true">Lượt 5 nguồn</button>
+<button data-case="grant" aria-pressed="false">Học bổng thiếu điều kiện</button>
+<button data-case="pricing" aria-pressed="false">Nguồn mâu thuẫn về phí</button>
+</div>
+<h3>Đầu vào mẫu</h3><ol id="inputs"></ol>
+<button class="primary" id="run">Chạy mô phỏng</button>
+<p id="status" role="status" aria-live="polite"></p>
+<div id="results" hidden>
+<div class="scroll"><table>
+<caption>Bảng bàn giao · Dữ liệu giả</caption>
+<thead><tr><th>Tiêu đề</th><th>Tóm tắt ngắn</th><th>Nguồn</th><th>Link gốc</th><th>Ngày đăng</th><th>Ghi chú cần kiểm tra</th></tr></thead>
+<tbody id="rows"></tbody>
+</table></div>
+<details><summary>Đối soát từng đầu vào</summary><ul id="audit"></ul></details>
+<div id="review" hidden>
+<h3>Thử xử lý ngoại lệ</h3><p id="feedback"></p>
+<button class="primary" id="resume">Chạy tiếp với phản hồi mẫu</button>
+</div>
+</div>
+</section>
+<div class="grid">
+<section class="panel"><div class="eyebrow">01 / NĂNG LỰC</div><h2>Cách Agent làm việc</h2><p>Kiểm tra nguồn, ưu tiên phụ đề có sẵn, dùng bản chép lời khi cần. Chọn đoạn có căn cứ, gộp tin theo cùng sự kiện, rồi xếp theo mức hữu ích, tác động và độ mới.</p></section>
+<section class="panel"><div class="eyebrow">02 / QUY CHUẨN</div><h2>Thế nào là bàn giao đạt?</h2><p>Mỗi đầu vào có kết quả đối soát. Tin gộp giữ các nguồn liên quan. Chi tiết quan trọng và điều kiện áp dụng phải còn nguyên. Tối đa ba tin đạt có ⭐.</p></section>
+<section class="panel"><div class="eyebrow">03 / RANH GIỚI</div><h2>Khi nào cần người kiểm tra?</h2><p>Nguồn bị giới hạn, đoạn khó nghe, nghi trùng hoặc mâu thuẫn chưa giải quyết được đều có ghi chú. Thông tin chưa xác định để trống. Agent xử lý tiếp khi được yêu cầu.</p></section>
+</div>
+<footer>Trang công khai dùng dữ liệu giả có sẵn. Các thao tác chỉ thay đổi phần hiển thị trên trang.</footer>
+</main>
+<script>
+const cases = {
+  batch: {
+    inputs: ['M01 · Video giới thiệu tính năng tạo flashcard', 'M02 · Podcast đưa tin về cùng đợt phát hành', 'M03 · Hướng dẫn ôn tập theo phiên ngắn', 'M04 · Video đề cập học bổng nhưng thiếu điều kiện', 'M05 · Video chỉnh ảnh bằng AI'],
+    rows: [
+      ['⭐ Tạo flashcard từ bài giảng', 'Hai nguồn mô tả cùng một đợt giới thiệu tính năng tạo flashcard.', 'Video M01, Podcast M02', 'M01 · M02', '2026-10-20', '', 'Hai nguồn nói về cùng công cụ, tính năng và đợt phát hành. Gộp tin và giữ đủ hai nguồn.'],
+      ['⭐ Ôn tập theo phiên ngắn', 'Chia ghi chú theo chủ đề và tự kiểm tra bằng câu hỏi ngắn.', 'Video M03', 'M03', '2026-10-18', '', 'Đoạn giả lập 02:10–03:05 có hướng dẫn áp dụng cụ thể.'],
+      ['', '', 'Video M04', 'M04', '', 'Chờ kiểm tra: Thiếu điều kiện xét học bổng.', 'Đoạn mẫu nêu mức hỗ trợ nhưng chưa xác định ai đủ điều kiện.'],
+      ['', '', 'Video M05', 'M05', '', 'Đã loại: Chủ đề chỉnh ảnh không liên quan đến ôn tập.', 'Nội dung chỉ mô tả thao tác chỉnh ảnh.']
+    ],
+    audit: ['M01 và M02 → tin flashcard đã gộp, giữ cả hai nguồn.', 'M03 → tin ôn tập đạt.', 'M04 → Chờ kiểm tra.', 'M05 → Đã loại.'],
+    reviewIndex: 2,
+    feedback: 'PH001 · Nguồn bổ sung giả lập xác nhận học bổng áp dụng cho sinh viên năm nhất đủ điều kiện.',
+    resolution: ['Học bổng dành cho sinh viên năm nhất', 'Nguồn bổ sung mẫu xác nhận đối tượng xét là sinh viên năm nhất đủ điều kiện.', 'Video M04 và thông báo mẫu M04-B', 'M04 · M04-B', '', 'Đã giải quyết · PH001: Đã bổ sung đối tượng áp dụng.', 'Thông báo mẫu M04-B cung cấp điều kiện còn thiếu.'],
+    auditAfter: 'M04 → Đã đối soát thay đổi sau phản hồi mẫu.'
+  },
+  grant: {
+    inputs: ['H01 · Video nêu hỗ trợ 100% học phí, thiếu phần điều kiện'],
+    rows: [['', '', 'Video H01', 'H01', '', 'Chờ kiểm tra: Chưa lấy được phần điều kiện xét học bổng.', 'Đoạn 01:12 chỉ nêu mức hỗ trợ. Thiếu đối tượng, yêu cầu và thời hạn.']],
+    audit: ['H01 → Chờ kiểm tra, chưa có tin đạt.'],
+    reviewIndex: 0,
+    feedback: 'PH001 · Thông báo mẫu H01-B xác nhận chỉ xét sinh viên năm nhất đủ điều kiện.',
+    resolution: ['Hỗ trợ học phí cho sinh viên năm nhất đủ điều kiện', 'Thông báo mẫu xác nhận phạm vi xét hỗ trợ.', 'Video H01 và thông báo mẫu H01-B', 'H01 · H01-B', '', 'Đã giải quyết · PH001: Đã xác minh đối tượng.', 'Điều kiện được lấy từ thông báo mẫu H01-B.'],
+    auditAfter: 'H01 → Đã đối soát thay đổi sau phản hồi mẫu.'
+  },
+  pricing: {
+    inputs: ['P01 · Video nói tính năng miễn phí', 'P02 · Podcast nói tính năng cần trả phí'],
+    rows: [['Ra mắt tính năng tạo flashcard', 'Hai nguồn cùng đưa tin về đợt ra mắt. Điều kiện sử dụng chưa được xác minh.', 'Video P01, Podcast P02', 'P01 · P02', '', 'Chờ kiểm tra: Một nguồn nói miễn phí, nguồn còn lại nói cần trả phí.', 'Cùng đợt phát hành. Giữ phần thống nhất và đối chiếu gói tài khoản trước khi kết luận.']],
+    audit: ['P01 và P02 → cùng một tin gộp, giữ hai nguồn và ghi mâu thuẫn.'],
+    reviewIndex: 0,
+    feedback: 'PH001 · Thông báo mẫu P03 xác nhận dùng thử 30 ngày cho tài khoản sinh viên đã xác minh.',
+    resolution: ['Dùng thử 30 ngày cho tài khoản sinh viên đã xác minh', 'Điều kiện dùng thử của tính năng flashcard đã được đối chiếu với thông báo mẫu.', 'Video P01, Podcast P02, thông báo P03', 'P01 · P02 · P03', '', 'Đã giải quyết · PH001: Đã xác minh điều kiện dùng thử.', 'Thông báo mẫu P03 làm rõ thời hạn và điều kiện tài khoản.'],
+    auditAfter: 'P01 và P02 → Đã đối soát tin gộp sau phản hồi mẫu.'
+  }
+};
+const $ = id => document.getElementById(id);
+let current = cases.batch;
+function fillList(id, entries) {
+  $(id).replaceChildren(...entries.map(entry => {
+    const li = document.createElement('li');
+    li.textContent = entry;
+    return li;
+  }));
+}
+function render(resolved) {
+  const rows = current.rows.map((row, index) => resolved && index === current.reviewIndex ? current.resolution : row);
+  $('rows').replaceChildren(...rows.map(row => {
+    const tr = document.createElement('tr');
+    row.slice(0, 6).forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = value || '—';
+      tr.append(td);
+    });
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.textContent = 'Xem căn cứ';
+    details.append(summary, row[6]);
+    tr.lastElementChild.append(details);
+    return tr;
+  }));
+  fillList('audit', resolved ? [...current.audit.slice(0, current.reviewIndex === 2 ? 2 : 0), current.auditAfter, ...current.audit.slice(current.reviewIndex === 2 ? 3 : 1)] : current.audit);
+  $('status').textContent = resolved ? 'Đã đối soát thay đổi mô phỏng · PH001 đã xử lý.' : 'Đã tạo kết quả mô phỏng · đối soát ' + current.inputs.length + '/' + current.inputs.length + ' nguồn mẫu.';
+  $('feedback').textContent = current.feedback;
+  $('review').hidden = resolved;
+  $('results').hidden = false;
+}
+function selectCase(key) {
+  current = cases[key];
+  document.querySelectorAll('[data-case]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.case === key)));
+  fillList('inputs', current.inputs);
+  $('results').hidden = true;
+  $('status').textContent = '';
+}
+document.querySelectorAll('[data-case]').forEach(button => button.addEventListener('click', () => selectCase(button.dataset.case)));
+$('run').addEventListener('click', () => render(false));
+$('resume').addEventListener('click', () => render(true));
+selectCase('batch');
+</script>
+</html>
