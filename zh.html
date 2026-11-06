@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-Hans">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="面向学生的音视频转写与资讯汇总智能体公开演示。">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>音视频转写与资讯汇总智能体</title>
+<style>
+:root{color-scheme:light;--ink:#132a25;--muted:#475e56;--line:#d4e3d9;--green:#12634d;--paper:#f5f7f1}
+*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,sans-serif;background:var(--paper);color:var(--ink)}
+header{position:sticky;top:0;z-index:1;background:#102f26;color:#fff;padding:12px max(5vw,calc((100% - 1100px)/2));display:flex;gap:10px;align-items:center;justify-content:space-between}
+header small{color:#bff2d9;font-weight:700;text-align:right}main{max-width:1150px;margin:auto;padding:0 24px 60px}
+.hero{padding:60px 0 32px}.eyebrow{font-size:.82rem;letter-spacing:.14em;font-weight:800;color:var(--green)}
+h1{font-size:clamp(2.6rem,7vw,5.5rem);line-height:1;letter-spacing:-.055em;margin:15px 0 20px;max-width:830px}
+h2,h3{line-height:1.25}p{max-width:75ch}.muted{color:var(--muted)}
+.panel{background:white;border:1px solid var(--line);border-radius:20px;padding:clamp(16px,3vw,32px);margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
+button{font:inherit;font-weight:700;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);padding:9px 15px;cursor:pointer}
+button.primary,button[aria-pressed=true]{background:var(--green);color:white;border-color:var(--green)}
+button:focus-visible,summary:focus-visible{outline:3px solid #a05400;outline-offset:3px}
+button:disabled{opacity:.55;cursor:wait}.actions{display:flex;flex-wrap:wrap;gap:8px}
+.scroll{overflow:auto}table{border-collapse:collapse;width:100%;min-width:820px}
+caption{text-align:left;font-weight:700;margin:10px 0}th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-size:.84rem;background:#eff5ed}details{margin:8px 0}summary{cursor:pointer;color:var(--green);font-weight:700}
+.badge{display:inline-block;border-radius:20px;background:#dff4e9;color:#135139;padding:2px 9px;font-size:.85rem;font-weight:700}
+footer{color:var(--muted);font-size:.9rem}ol,ul{padding-left:22px} [hidden]{display:none!important}
+</style>
+<header><strong>◉ Agent Studio</strong><small>模拟演示 · 虚构数据</small></header>
+<main>
+<!-- language-switch -->
+<nav aria-label="Language" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:18px"><a style="color:#12634d;font-weight:700" href="index.html" hreflang="vi" lang="vi">Tiếng Việt</a><a style="color:#12634d;font-weight:700" href="en.html" hreflang="en" lang="en">English</a><a style="color:#12634d;font-weight:700" href="zh.html" hreflang="zh-Hans" lang="zh-Hans" aria-current="page">简体中文</a></nav>
+<!-- /language-switch -->
+<section class="hero">
+<div class="eyebrow">能力档案 / 01</div>
+<h1>从音视频<br>到有用资讯。</h1>
+<p>音视频转写智能体为学生筛选学习与技能资讯，保留可追溯的来源，并标记需要人工核实的内容。</p>
+<p class="muted">选择一个场景，查看处理流程和交付示例。</p>
+</section>
+<section class="panel" aria-labelledby="demo">
+<h2 id="demo">模拟工作台</h2>
+<div class="actions" id="scenarios">
+<button data-case="batch" aria-pressed="true">五个来源</button>
+<button data-case="grant" aria-pressed="false">缺少奖学金申请条件</button>
+<button data-case="pricing" aria-pressed="false">来源对费用说法不一</button>
+</div>
+<h3>示例输入</h3><ol id="inputs"></ol>
+<button class="primary" id="run">运行模拟</button>
+<p id="status" role="status" aria-live="polite"></p>
+<div id="results" hidden>
+<div class="scroll"><table>
+<caption>交付表 · 虚构数据</caption>
+<thead><tr><th>标题</th><th>简短摘要</th><th>来源</th><th>原始链接</th><th>发布日期</th><th>核查备注</th></tr></thead>
+<tbody id="rows"></tbody>
+</table></div>
+<details><summary>逐项核对输入</summary><ul id="audit"></ul></details>
+<div id="review" hidden>
+<h3>尝试处理异常</h3><p id="feedback"></p>
+<button class="primary" id="resume">使用示例反馈继续</button>
+</div>
+</div>
+</section>
+<div class="grid">
+<section class="panel"><div class="eyebrow">01 / 能力</div><h2>智能体如何工作</h2><p>核查来源，优先使用现有字幕，必要时使用转写稿。选取有依据的片段，合并同一事件的报道，再按实用性、影响和时效性排序。</p></section>
+<section class="panel"><div class="eyebrow">02 / 标准</div><h2>什么样的交付才算合格？</h2><p>每项输入都有可核对的处理结果。合并资讯保留相关来源。重要细节和适用条件必须完整。最多三条合格资讯可标记 ⭐。</p></section>
+<section class="panel"><div class="eyebrow">03 / 边界</div><h2>何时需要人工核查？</h2><p>访问受限、音频模糊、疑似重复或尚未解决的冲突都会被标记。无法确认的字段留空。智能体仅在收到请求后继续处理。</p></section>
+</div>
+<footer>此公开页面使用预置虚构数据，操作仅改变页面展示。</footer>
+</main>
+<script>
+const cases = {
+  batch: {
+    inputs: ['M01 · 学习卡片功能介绍视频', 'M02 · 报道同次发布的播客', 'M03 · 短时段复习指南', 'M04 · 未说明申请条件的奖学金视频', 'M05 · AI 修图视频'],
+    rows: [
+      ['⭐ 从讲义生成学习卡片', '两个来源报道了同一次学习卡片功能发布。', '视频 M01、播客 M02', 'M01 · M02', '2026-10-20', '', '两个来源报道了相同的工具、功能和发布批次。合并资讯并保留两个来源。'],
+      ['⭐ 分时段复习', '按主题整理笔记，用简短问题自测。', '视频 M03', 'M03', '2026-10-18', '', '模拟片段 02:10–03:05 提供了可操作的建议。'],
+      ['', '', '视频 M04', 'M04', '', '待核查：缺少奖学金评审条件。', '示例片段说明了资助金额，但未明确申请资格。'],
+      ['', '', '视频 M05', 'M05', '', '已排除：修图与复习主题无关。', '该来源仅介绍修图操作。']
+    ],
+    audit: ['M01 和 M02 → 合并为学习卡片资讯，保留两个来源。', 'M03 → 复习资讯通过核查。', 'M04 → 待核查。', 'M05 → 已排除。'],
+    reviewIndex: 2,
+    feedback: 'PH001 · 模拟补充来源确认奖学金适用于符合条件的大一学生。',
+    resolution: ['面向大一学生的奖学金', '示例补充来源确认评审对象为符合条件的大一学生。', '视频 M04 和示例公告 M04-B', 'M04 · M04-B', '', '已解决 · PH001：已补充适用对象。', '示例公告 M04-B 补充了缺失条件。'],
+    auditAfter: 'M04 → 已核对示例反馈后的更新。'
+  },
+  grant: {
+    inputs: ['H01 · 视频提及全额学费资助，但未说明条件'],
+    rows: [['', '', '视频 H01', 'H01', '', '待核查：尚未获取奖学金评审条件。', '01:12 处仅说明资助额度，缺少适用对象、要求和截止日期。']],
+    audit: ['H01 → 待核查，暂无合格资讯。'],
+    reviewIndex: 0,
+    feedback: 'PH001 · 示例公告 H01-B 确认仅评审符合条件的大一学生。',
+    resolution: ['面向符合条件的大一学生的学费资助', '示例公告确认了资助对象。', '视频 H01 和示例公告 H01-B', 'H01 · H01-B', '', '已解决 · PH001：已核实适用对象。', '该条件来自示例公告 H01-B。'],
+    auditAfter: 'H01 → 已核对示例反馈后的更新。'
+  },
+  pricing: {
+    inputs: ['P01 · 视频称功能免费', 'P02 · 播客称功能需付费'],
+    rows: [['学习卡片功能发布', '两个来源都报道了此次发布，使用条件尚未核实。', '视频 P01、播客 P02', 'P01 · P02', '', '待核查：一个来源称免费，另一个称需付费。', '属于同次发布。保留一致的信息，核对账户套餐后再下结论。']],
+    audit: ['P01 和 P02 → 合并为一条资讯，保留两个来源并记录冲突。'],
+    reviewIndex: 0,
+    feedback: 'PH001 · 示例公告 P03 确认已验证的学生账户可试用 30 天。',
+    resolution: ['已验证的学生账户可试用 30 天', '已依据示例公告核对学习卡片功能的试用条件。', '视频 P01、播客 P02、公告 P03', 'P01 · P02 · P03', '', '已解决 · PH001：已核实试用条件。', '示例公告 P03 明确了试用期限和账户要求。'],
+    auditAfter: 'P01 和 P02 → 已核对示例反馈后的合并资讯。'
+  }
+};
+const $ = id => document.getElementById(id);
+let current = cases.batch;
+function fillList(id, entries) {
+  $(id).replaceChildren(...entries.map(entry => {
+    const li = document.createElement('li');
+    li.textContent = entry;
+    return li;
+  }));
+}
+function render(resolved) {
+  const rows = current.rows.map((row, index) => resolved && index === current.reviewIndex ? current.resolution : row);
+  $('rows').replaceChildren(...rows.map(row => {
+    const tr = document.createElement('tr');
+    row.slice(0, 6).forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = value || '—';
+      tr.append(td);
+    });
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.textContent = '查看依据';
+    details.append(summary, row[6]);
+    tr.lastElementChild.append(details);
+    return tr;
+  }));
+  fillList('audit', resolved ? [...current.audit.slice(0, current.reviewIndex === 2 ? 2 : 0), current.auditAfter, ...current.audit.slice(current.reviewIndex === 2 ? 3 : 1)] : current.audit);
+  $('status').textContent = resolved ? '已核对模拟更新 · PH001 已处理。' : '模拟完成 · 已核对 ' + current.inputs.length + '/' + current.inputs.length + ' 个示例来源。';
+  $('feedback').textContent = current.feedback;
+  $('review').hidden = resolved;
+  $('results').hidden = false;
+}
+function selectCase(key) {
+  current = cases[key];
+  document.querySelectorAll('[data-case]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.case === key)));
+  fillList('inputs', current.inputs);
+  $('results').hidden = true;
+  $('status').textContent = '';
+}
+document.querySelectorAll('[data-case]').forEach(button => button.addEventListener('click', () => selectCase(button.dataset.case)));
+$('run').addEventListener('click', () => render(false));
+$('resume').addEventListener('click', () => render(true));
+selectCase('batch');
+</script>
+</html>
